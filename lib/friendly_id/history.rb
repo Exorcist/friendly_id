@@ -127,7 +127,8 @@ method.
         scope = Slug.where("slug = ? OR slug LIKE ?", normalized, wildcard)
         scope = scope.where(:sluggable_type => sluggable_class.to_s)
         scope = scope.where("sluggable_id <> ?", value) unless sluggable.new_record?
-        scope.order("LENGTH(slug) DESC, slug DESC")
+        
+        ActiveRecord::Base.connection_config[:adapter] == "sqlserver" ? scope.order("LEN(slug) DESC, slug DESC") : scope.order("LENGTH(slug) DESC, slug DESC")        
       end
     end
   end
